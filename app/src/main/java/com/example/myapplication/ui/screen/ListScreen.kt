@@ -2,12 +2,15 @@ package com.example.myapplication.ui.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -37,7 +40,10 @@ import com.example.myapplication.ui.theme.MyApplicationTheme
 fun ListScreen(
     navController: NavController,
 ) {
+    val viewModel: MusculationViewModel = viewModel()
+
     Scaffold(
+
         topBar = {
             TopAppBar(
                 title = { Text("Récapitulatif de scéance") },
@@ -47,20 +53,46 @@ fun ListScreen(
                     }
                 }
             )
+        },
+        bottomBar = {
+            Row {
+                Button(
+                    modifier = Modifier.weight(1f),
+                    content = {
+                        Text("Add")
+                    },
+                    onClick = {
+                        viewModel.insertAndroidVersion()
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
+                )
+                Button(
+                    modifier = Modifier.weight(1f),
+                    content = {
+                        Text("Delete")
+                    },
+                    onClick = {
+                        viewModel.deleteAllAndroidVersion()
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+
+                    )
+            }
         }
+
     ) { padding ->
-        ListScreen(modifier = Modifier.padding(padding))
+        ListScreen(modifier = Modifier.padding(padding), viewModel)
     }
 }
 
 @Composable
-fun ListScreen(modifier: Modifier) {
+fun ListScreen(modifier: Modifier, viewModel: MusculationViewModel) {
     Surface(
         modifier = modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background,
     ) {
-    val viewModel: MusculationViewModel = viewModel()
-    val listOfResult = viewModel.musculationList.collectAsState().value
+
+    val listOfResult = viewModel.musculationList.collectAsState(emptyList()).value
     LazyColumn(
         modifier = Modifier.padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,

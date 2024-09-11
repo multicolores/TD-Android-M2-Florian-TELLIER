@@ -1,6 +1,6 @@
 package com.example.myapplication.ui.model
 
-import com.example.myapplication.data.model.MusculationObject
+import com.example.myapplication.data.model.MusculationEntity
 
 
 sealed interface ItemUi {
@@ -19,12 +19,12 @@ sealed interface ItemUi {
     ) : ItemUi
 }
 
-fun List<MusculationObject>.toUi(): List<ItemUi.Item> {
-    return map { currentMusculationObject ->
-        ItemUi.Item(
-            exerciseName = currentMusculationObject.exerciseName,
-            recoveryTime = currentMusculationObject.recoveryTime,
-            totalNumberOfRepetation = currentMusculationObject.totalNumberOfRepetation
-        )
-    }
-}
+//fun List<MusculationEntity>.toUi(): List<ItemUi.Item> {
+//    return map { currentMusculationObject ->
+//        ItemUi.Item(
+//            exerciseName = currentMusculationObject.exerciseName,
+//            recoveryTime = currentMusculationObject.recoveryTime,
+//            totalNumberOfRepetation = currentMusculationObject.totalNumberOfRepetation
+//        )
+//    }
+//}

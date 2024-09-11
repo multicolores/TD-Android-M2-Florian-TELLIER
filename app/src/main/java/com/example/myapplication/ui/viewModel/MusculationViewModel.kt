@@ -4,52 +4,59 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.data.repository.MusculationRepository
 import com.example.myapplication.ui.model.ItemUi
-import com.example.myapplication.ui.model.toUi
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 
 class MusculationViewModel : ViewModel() {
     // Variable mutable en privée signifie que personne peut modifier le contenu à part le ViewModel
     // lui même. C'est un pattern important à respecter
-    private val _musculationList = MutableStateFlow<List<ItemUi>>(emptyList())
+    private val _musculationList: Flow<List<ItemUi>>
+        get() = musculationRepository.selectAllMusculation().map { musculationObjectEntities ->
+            musculationObjectEntities.groupBy { musculationObjectEntity ->
+                musculationObjectEntity.exerciseName
+            }.flatMap {
+                buildList {
+                    add(
+                        ItemUi.Header(
+                            title = it.key,
+                        )
+                    )
+                    addAll(it.value)
+
+                    add(
+                        ItemUi.Footer(
+                            numberOfSet = it.value.size,
+                        )
+                    )
+                }
+            }
+        }
+
 
     // On rend accessible uniquement en lecture la valeur de la variable mutable afin de bloquer l'accès
-    val musculationList: StateFlow<List<ItemUi>> get() = _musculationList.asStateFlow()
+    val musculationList: Flow<List<ItemUi>> get() = _musculationList
 
     private val musculationRepository: MusculationRepository by lazy { MusculationRepository() }
 
-    init {
+    fun insertAndroidVersion() {
         viewModelScope.launch(Dispatchers.IO) {
-            // On exécute dans un petit thread dédié à Input/Output le fait de générer la liste
-            _musculationList.emit(populateMusculationListData())
+            val random = Random.nextInt(0, 10)
+            musculationRepository.insertmMsculation(
+                ItemUi.Item("exercise $random", "$random min", random)
+            )
         }
     }
 
-    private fun populateMusculationListData(): List<ItemUi> {
-        val result = mutableListOf<ItemUi>()
-        musculationRepository.populateMusculationListData().groupBy { myAndroidObject ->
-            myAndroidObject.exerciseName
+    fun deleteAllAndroidVersion() {
+        viewModelScope.launch(Dispatchers.IO) {
+            musculationRepository.deleteAllMusculation()
         }
-            .forEach { element ->
-                result.add(
-                    ItemUi.Header(
-                        title = element.key,
-                    )
-                )
-                result.addAll(
-                    element.value.toUi()
-                )
-                result.add(
-                    ItemUi.Footer(
-                        numberOfSet = element.value.size,
-                    ))
-            }
-        return result
     }
-
 }
-
