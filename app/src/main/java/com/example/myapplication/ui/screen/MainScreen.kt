@@ -28,7 +28,8 @@ import com.example.myapplication.ui.theme.MyApplicationTheme
 @Composable
 fun MainScreen(
     onButtonClick: () -> Unit,
-) {
+    onButtonClick2: () -> Unit,
+    ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -54,6 +55,12 @@ fun MainScreen(
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
                 onClick = { onButtonClick() }
             )
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                content = { Text("Voir carte YuGiOh !") },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
+                onClick = { onButtonClick2() }
+            )
         }
         val painter = rememberAsyncImagePainter(
             ImageRequest
@@ -74,6 +81,6 @@ fun MainScreen(
 @Composable
 fun GreetingPreview() {
     MyApplicationTheme {
-        MainScreen({})
+        MainScreen({}, {})
     }
 }
