@@ -43,7 +43,6 @@ fun ListScreen(
     val viewModel: MusculationViewModel = viewModel()
 
     Scaffold(
-
         topBar = {
             TopAppBar(
                 title = { Text("Récapitulatif de scéance") },
