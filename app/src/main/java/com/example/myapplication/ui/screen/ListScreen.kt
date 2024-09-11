@@ -1,12 +1,9 @@
 package com.example.myapplication.ui.screen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.paddingFromBaseline
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -22,17 +19,17 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
 import com.example.myapplication.ui.model.ItemUi
+import com.example.myapplication.ui.viewModel.MusculationViewModel
 import com.example.myapplication.ui.theme.MyApplicationTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,10 +49,73 @@ fun ListScreen(
             )
         }
     ) { padding ->
-            MusculationWorkoutList(modifier = Modifier.padding(padding))
+        ListScreen(modifier = Modifier.padding(padding))
     }
 }
 
+@Composable
+fun ListScreen(modifier: Modifier) {
+    Surface(
+        modifier = modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background,
+    ) {
+    val viewModel: MusculationViewModel = viewModel()
+    val listOfResult = viewModel.musculationList.collectAsState().value
+    LazyColumn(
+        modifier = Modifier.padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(15.dp),
+
+    ) {
+        items(listOfResult) { eachItem ->
+            when (eachItem) {
+                is ItemUi.Header ->
+                    OutlinedCard(
+                        modifier = Modifier.fillParentMaxWidth().then(Modifier.padding(top = 35.dp)),
+                        colors = CardDefaults.cardColors().copy(containerColor = Color.Black)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillParentMaxWidth()
+                                .padding(8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Text(
+                                text = eachItem.title,
+                                style = MaterialTheme.typography.displaySmall,
+                                color = Color.White,
+                            )
+                        }
+                    }
+
+                is ItemUi.Item -> Text(
+                    text = "${eachItem.totalNumberOfRepetation} reps - RecoveryTime: ${eachItem.recoveryTime}",
+                    style = MaterialTheme.typography.titleSmall,
+                )
+
+                is ItemUi.Footer ->
+                    OutlinedCard(
+                        colors = CardDefaults.cardColors().copy(containerColor = Color.DarkGray)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .padding(8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Text(
+                                text = "Nombre total de set: ${eachItem.numberOfSet}",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = Color.White,
+                            )
+                        }
+                    }
+            }
+        }
+    }
+    }
+}
+
+/*
 private fun populateMusculationListData(): List<ItemUi.MusculationObject> {
     return listOf(
         ItemUi.MusculationObject(exerciseName = "Développé couché", recoveryTime = "1 min", totalNumberOfRepetation = 10),
@@ -156,8 +216,8 @@ private fun MusculationWorkoutList(modifier: Modifier) {
             }
         }
     }
-
 }
+*/
 
 
 @Preview(showBackground = true, showSystemUi = true)
